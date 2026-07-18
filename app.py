@@ -14,7 +14,7 @@ st.markdown("""
     """, unsafe_allow_html=True)
 
 st.markdown(f"<p style='text-align: right; color: #888; font-size: 10px;'>Versión: {VERSION}</p>", unsafe_allow_html=True)
-st.title("🛠️ Calculadora Pro - Mantenciones C&R")
+st.title("🛠️ Calculadora Pro - ")
 st.markdown("---")
 
 # --- 1. SERVICIOS ---
