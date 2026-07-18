@@ -1,46 +1,47 @@
 import streamlit as st
 
 # --- CONFIGURACIÓN Y VERSIÓN ---
-VERSION = "v2.1"
+VERSION = "v3.0"
 st.set_page_config(page_title="Calculadora Pro Mantenciones Beta", layout="centered")
 
 st.markdown(f"<p style='text-align: right; color: #888; font-size: 10px;'>Versión: {VERSION}</p>", unsafe_allow_html=True)
 st.markdown("<h1 style='text-align: center; color: #2E86C1;'>🛠️ Calculadora Pro - Mantenciones Beta</h1>", unsafe_allow_html=True)
-st.write("---")
 
 # --- SECCIÓN 1: SERVICIOS ---
 st.header("1. Servicios")
-costo_limpieza = st.number_input("Costo Limpieza y Cepillado ($)", min_value=0.0, step=1000.0)
-costo_hipoclorito = st.number_input("Costo Insumos (Hipoclorito) ($)", min_value=0.0, step=500.0)
-costo_hidro = st.number_input("Costo Hidrolavado ($)", min_value=0.0, step=1000.0)
+col_s1, col_s2, col_s3 = st.columns(3)
+costo_limpieza = col_s1.number_input("Limpieza ($)", min_value=0.0, step=1000.0)
+costo_hipoclorito = col_s2.number_input("Insumos ($)", min_value=0.0, step=500.0)
+costo_hidro = col_s3.number_input("Hidro ($)", min_value=0.0, step=1000.0)
 
-# --- SECCIÓN 2: TUBOS PVC (NUEVO) ---
-st.header("2. Tubos PVC")
-tipo_tubo = st.selectbox("Selecciona el tipo de tubo:", 
-                         ["Agua (Cementar)", "Alcantarillado (Gris)", "Sanitario (Gris)", "Presión (Clase 10)"])
-diametro = st.select_slider("Diámetro (mm):", options=[20, 25, 32, 50, 63, 75, 90, 110])
-metros = st.number_input("Cantidad de metros:", min_value=0, step=1)
+# --- SECCIÓN 2: TUBOS Y CONEXIONES (NUEVA ESTRUCTURA) ---
+st.header("2. Materiales por Diámetro")
+diametro = st.select_slider("Selecciona el Diámetro (mm):", options=[20, 25, 32, 50, 63, 75, 90, 110])
 
-# Lógica de precios (Ejemplo base multiplicado por tipo y diámetro)
-multiplicador = {"Agua (Cementar)": 1.0, "Alcantarillado (Gris)": 1.2, "Sanitario (Gris)": 1.1, "Presión (Clase 10)": 1.5}
-precio_base_mt = (diametro * 100) * multiplicador[tipo_tubo]
-total_tubos = metros * precio_base_mt
+# Precios base estimados por diámetro (puedes ajustar estos valores)
+base = diametro * 50 
 
-st.write(f"**Precio estimado por metro:** $ {precio_base_mt:,.0f}")
+st.subheader(f"Tubos y Accesorios ({diametro}mm)")
+metros = st.number_input("Metros de Tubo:", min_value=0, step=1)
+codo_90 = st.number_input("Codos 90°:", min_value=0, step=1)
+codo_45 = st.number_input("Codos 45°:", min_value=0, step=1)
+tee = st.number_input("Tees:", min_value=0, step=1)
+copla = st.number_input("Coplas/Uniones:", min_value=0, step=1)
+adaptador = st.number_input("Adaptadores (M/H):", min_value=0, step=1)
+valvula = st.number_input("Válvulas de Paso:", min_value=0, step=1)
+
+# Cálculo materiales
+total_materiales = (metros * (base * 2)) + (codo_90 * (base*0.5)) + (codo_45 * (base*0.4)) + \
+                   (tee * (base*0.6)) + (copla * (base*0.3)) + (adaptador * (base*0.8)) + (valvula * (base*3))
 
 # --- SECCIÓN 3: PERNOS Y FIJACIONES ---
-st.header("3. Pernos, Tuercas y Arandelas")
-medida = st.selectbox("Medida de fijación:", ["4mm", "6mm", "8mm", "10mm", "12mm"])
-tipo = st.selectbox("Tipo:", ["Perno", "Tuerca", "Tornillo", "Arandela"])
-
-precios_fij = {"Perno": 150, "Tuerca": 80, "Tornillo": 50, "Arandela": 30}
-precio_uni = precios_fij[tipo] * (int(medida.replace("mm","")) / 4)
-cant_fij = st.number_input(f"Cantidad de {tipo} {medida}", min_value=0, step=1)
-total_fijaciones = cant_fij * precio_uni
+st.header("3. Fijaciones")
+cant_fij = st.number_input("Cantidad de Pernos/Tuercas/Arandelas:", min_value=0, step=1)
+total_fijaciones = cant_fij * 200 # Precio promedio fijación
 
 # --- CÁLCULO FINAL ---
 st.divider()
-gran_total = costo_limpieza + costo_hipoclorito + costo_hidro + total_tubos + total_fijaciones
+gran_total = costo_limpieza + costo_hipoclorito + costo_hidro + total_materiales + total_fijaciones
 
 st.subheader(f"💰 Total Presupuesto: $ {gran_total:,.0f}")
 
