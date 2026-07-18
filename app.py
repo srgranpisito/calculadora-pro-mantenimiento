@@ -75,12 +75,9 @@ st.divider()
 st.subheader(f"💰 Total Presupuesto: $ {gran_total:,.0f}")
 
 # --- AVISO LEGAL ---
-st.divider()
 st.markdown("""
 <div style='text-align: center; color: #555555; font-size: 12px; font-style: italic;'>
     <strong>Aviso Legal:</strong> Este presupuesto es una estimación referencial basada en valores promedio del mercado nacional chileno. 
     <em>Calculadora Pro</em> no asume responsabilidad alguna ante fluctuaciones, ajustes tarifarios o variaciones de precios en los puntos de venta locales.
-</div>
-""", unsafe_allow_html=True)
 </div>
 """, unsafe_allow_html=True)
