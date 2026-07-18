@@ -1,37 +1,40 @@
 import streamlit as st
 
-st.set_page_config(page_title="Calculadora Pro de Mantenimiento")
-st.title("🛠️ Calculadora Pro de Mantenimiento")
+st.set_page_config(page_title="Calculadora Pro de Mantenciones C&R")
+st.title("🛠️ Calculadora Pro - Mantenciones C&R")
 
 # --- SECCIÓN 1: SERVICIOS ---
 st.header("1. Servicios")
 costo_limpieza = st.number_input("Costo Limpieza y Cepillado ($)", min_value=0.0, step=1000.0)
-costo_hipoclorito = st.number_input("Costo Insumos (Hipoclorito) ($)", min_value=0.0, step=1000.0)
+costo_hipoclorito = st.number_input("Costo Insumos (Hipoclorito) ($)", min_value=0.0, step=500.0)
 costo_hidro = st.number_input("Costo Hidrolavado ($)", min_value=0.0, step=1000.0)
 
-# --- SECCIÓN 2: MATERIALES ---
+# --- SECCIÓN 2: MATERIALES (Precios promedio mercado Chile) ---
 st.header("2. Materiales de Ferretería")
+st.write("Ingresa la cantidad de cada material:")
 
-if 'num_items' not in st.session_state:
-    st.session_state.num_items = 1
+# Precios basados en promedio de ferreterías chilenas para 20mm
+materiales = {
+    "Codo 90°": 240,
+    "Codo 45°": 120,
+    "Tee": 120,
+    "Cople": 200,
+    "Adaptador Macho/Hembra": 880,
+    "Tapón (Tapa gorro)": 420,
+    "Válvula de Bola": 490
+}
 
-if st.button("Agregar otro material"):
-    st.session_state.num_items += 1
+totales_materiales = {}
+for material, precio in materiales.items():
+    cantidad = st.number_input(f"{material} (aprox. $ {precio} c/u)", min_value=0, step=1)
+    totales_materiales[material] = cantidad * precio
 
-total_materiales = 0
-for i in range(st.session_state.num_items):
-    col1, col2, col3 = st.columns(3)
-    with col1:
-        nombre = st.text_input(f"Ítem {i+1}", key=f"nombre_{i}")
-    with col2:
-        cant = st.number_input("Cant.", min_value=0, key=f"cant_{i}")
-    with col3:
-        precio = st.number_input("Precio Unit ($)", min_value=0.0, step=100.0, key=f"precio_{i}")
-    
-    total_materiales += (cant * precio)
-
-# --- RESULTADO FINAL ---
-total_general = costo_limpieza + costo_hipoclorito + costo_hidro + total_materiales
-
+# --- CÁLCULO FINAL ---
 st.divider()
-st.subheader(f"Total Presupuesto: ${total_general:,.0f}")
+total_servicios = costo_limpieza + costo_hipoclorito + costo_hidro
+total_materiales = sum(totales_materiales.values())
+gran_total = total_servicios + total_materiales
+
+st.subheader(f"💰 Total Presupuesto: $ {gran_total:,.0f}")
+st.write(f"Total Servicios: $ {total_servicios:,.0f}")
+st.write(f"Total Materiales: $ {total_materiales:,.0f}")
