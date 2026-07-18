@@ -1,7 +1,7 @@
 import streamlit as st
 
-st.set_page_config(page_title="Calculadora Pro de Mantenciones C&R")
-st.title("🛠️ Calculadora Pro - Mantenciones C&R")
+st.set_page_config(page_title="Calculadora Pro de Mantenciones Beta")
+st.title("🛠️ Calculadora Pro - Mantenciones Beta")
 
 # --- SECCIÓN 1: SERVICIOS ---
 st.header("1. Servicios")
