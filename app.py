@@ -1,23 +1,21 @@
-# --- EXPORTAR A TXT ---
-st.divider()
-st.subheader("📥 Exportar Presupuesto")
+import streamlit as st
 
-resumen = f"""Presupuesto Mantenciones Beta
----------------------------
-Total Servicios: ${costo_limpieza + costo_hipoclorito + costo_hidro:,.0f}
-Total Tubos: ${precio_tubo:,.0f}
-Total Accesorios: ${total_accesorios:,.0f}
-Total Fijaciones: ${total_fijaciones:,.0f}
-Total Adhesivos: ${total_adhesivos:,.0f}
+st.set_page_config(page_title="Mantenciones Beta", layout="centered")
 
-GRAN TOTAL: ${gran_total:,.0f}
----------------------------
-Nota: Precios estimados para Chile.
-"""
+st.title("🛠️ Mantenciones Beta")
+st.subheader("Soluciones Profesionales en Mantenimiento")
 
-st.download_button(
-    label="Descargar Presupuesto (.txt)",
-    data=resumen,
-    file_name="presupuesto_mantenciones.txt",
-    mime="text/plain"
-)
+st.write("---")
+
+st.markdown("""
+### Bienvenido
+Esta es la plataforma oficial de cálculo y presupuestos para servicios técnicos. 
+Nuestra herramienta le permite cotizar con precisión profesional materiales, 
+insumos y fijaciones para sus proyectos en Chile.
+
+**Para comenzar:**
+* Acceda a nuestra **Calculadora Pro** mediante el menú de la izquierda.
+* Obtenga estimaciones precisas y actualizadas al mercado local.
+""")
+
+st.info("👈 Seleccione 'calculadora' en el menú lateral para iniciar.")
