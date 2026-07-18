@@ -1,7 +1,7 @@
 import streamlit as st
 
 # --- CONFIGURACIÓN Y VERSIÓN ---
-VERSION = "v6.0"
+VERSION = "v6.1"
 st.set_page_config(page_title="Calculadora Pro Mantenciones Beta", layout="centered")
 
 st.markdown(f"<p style='text-align: right; color: #888; font-size: 10px;'>Versión: {VERSION}</p>", unsafe_allow_html=True)
@@ -25,7 +25,7 @@ precio_tubo = metros * (diametro_tubo * 120)
 st.header("3. Conexiones y Accesorios")
 def selector_accesorio(nombre, precio_base):
     c1, c2, c3 = st.columns([2, 1, 1])
-    diam = c1.selectbox(f"Diámetro para {nombre}:", [20, 25, 32, 50, 63, 75, 90, 110], key=f"d_{nombre}")
+    diam = c1.selectbox(f"Diámetro {nombre}:", [20, 25, 32, 50, 63, 75, 90, 110], key=f"d_{nombre}")
     cant = c2.number_input(f"Cant:", min_value=0, key=f"c_{nombre}")
     return cant * (precio_base * (1 + (diam/100)))
 
@@ -41,25 +41,33 @@ bajada = selector_accesorio("Bajada", 700)
 salida_caja_conduit = selector_accesorio("Salida Caja Conduit", 1000)
 terminal_tuerca = selector_accesorio("Terminal c/ Tuerca", 1200)
 
-# --- SECCIÓN 4: FIJACIONES (NUEVA ESTRUCTURA) ---
+# --- SECCIÓN 4: FIJACIONES ---
 st.header("4. Fijaciones")
 def selector_fijacion(nombre, opciones_tipo):
     c1, c2, c3 = st.columns(3)
     diam = c1.selectbox(f"Diám. {nombre}:", ["4mm", "6mm", "8mm", "10mm", "12mm"], key=f"d_{nombre}")
     tipo = c2.selectbox(f"Tipo {nombre}:", opciones_tipo, key=f"t_{nombre}")
     cant = c3.number_input(f"Cant {nombre}:", min_value=0, key=f"c_{nombre}")
-    return cant * 150 # Precio base de fijación
+    return cant * 150
 
 pernos = selector_fijacion("Perno", ["Zincado", "Inoxidable", "Bronce"])
 tuercas = selector_fijacion("Tuerca", ["Hexagonal", "Ciega", "Autofrenante"])
 arandelas = selector_fijacion("Arandela", ["Plana", "Presión", "Goma"])
+
+# --- SECCIÓN 5: ADHESIVOS ---
+st.header("5. Adhesivos PVC")
+c1, c2 = st.columns(2)
+cant_tradicional = c1.number_input("Adhesivo Tradicional (tarros):", min_value=0)
+cant_humedad = c2.number_input("Adhesivo Alta Humedad (tarros):", min_value=0)
+total_adhesivos = (cant_tradicional * 4500) + (cant_humedad * 7500)
 
 # --- CÁLCULO FINAL ---
 total_accesorios = codo_90 + codo_45 + codo_doble + curva_conduit + tee + copla + \
                    copla_conduit + abrazadera + bajada + salida_caja_conduit + terminal_tuerca
 total_fijaciones = pernos + tuercas + arandelas
 
-gran_total = costo_limpieza + costo_hipoclorito + costo_hidro + precio_tubo + total_accesorios + total_fijaciones
+gran_total = costo_limpieza + costo_hipoclorito + costo_hidro + precio_tubo + \
+             total_accesorios + total_fijaciones + total_adhesivos
 
 st.divider()
 st.subheader(f"💰 Total Presupuesto: $ {gran_total:,.0f}")
