@@ -74,7 +74,29 @@ gran_total = costo_limpieza + costo_hipoclorito + costo_hidro + precio_tubo + \
 st.divider()
 st.subheader(f"💰 Total Presupuesto: $ {gran_total:,.0f}")
 
+# --- EXPORTAR A TXT ---
+resumen = f"""Presupuesto Mantenciones C&R
+---------------------------
+Total Servicios: ${costo_limpieza + costo_hipoclorito + costo_hidro:,.0f}
+Total Tubos: ${precio_tubo:,.0f}
+Total Accesorios: ${total_accesorios:,.0f}
+Total Fijaciones: ${total_fijaciones:,.0f}
+Total Adhesivos: ${total_adhesivos:,.0f}
+
+GRAN TOTAL: ${gran_total:,.0f}
+---------------------------
+Nota: Precios estimados para el mercado de Chile.
+"""
+
+st.download_button(
+    label="📥 Descargar Presupuesto (.txt)",
+    data=resumen,
+    file_name="presupuesto_Mantenciones_CyR.txt",
+    mime="text/plain"
+)
+
 # --- AVISO LEGAL ---
+st.divider()
 st.markdown("""
 <div style='text-align: center; color: #555555; font-size: 12px; font-style: italic;'>
     <strong>Aviso Legal:</strong> Este presupuesto es una estimación referencial basada en valores promedio del mercado nacional chileno. 
