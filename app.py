@@ -1,7 +1,11 @@
 import streamlit as st
 
-st.set_page_config(page_title="Calculadora Pro - Mantenciones Beta")
-st.title("🛠️ Calculadora Pro - Mantenciones Beta")
+# Configuración de página
+st.set_page_config(page_title="Calculadora Mantenciones Beta", layout="centered")
+
+# Diseño personalizado con HTML
+st.markdown("<h1 style='text-align: center; color: #2E86C1;'>🛠️ Mantenciones Beta</h1>", unsafe_allow_html=True)
+st.write("---")
 
 # --- SECCIÓN 1: SERVICIOS ---
 st.header("1. Servicios")
@@ -11,28 +15,43 @@ costo_hidro = st.number_input("Costo Hidrolavado ($)", min_value=0.0, step=1000.
 
 # --- SECCIÓN 2: MATERIALES ---
 st.header("2. Materiales de Ferretería")
-diametro = st.selectbox("Selecciona el diámetro de la tubería:", ["20mm", "25mm", "32mm"])
 
-# Ajuste de precios según diámetro (ejemplo base para 20mm)
-# Si es 25mm o 32mm, multiplicamos el precio base
-factor = 1.0 if diametro == "20mm" else (1.4 if diametro == "25mm" else 1.8)
-
+# Definición de materiales con sus características
+# Estructura: Nombre, Precio Base
 materiales = {
-    f"Tubo PVC 3m ({diametro})": int(2500 * factor),
-    f"Codo 90° ({diametro})": int(240 * factor),
-    f"Codo 45° ({diametro})": int(120 * factor),
-    f"Tee ({diametro})": int(120 * factor),
-    f"Cople ({diametro})": int(200 * factor),
-    f"Adaptador Macho/Hembra ({diametro})": int(880 * factor),
-    f"Tapón ({diametro})": int(420 * factor),
-    "Válvula de Bola": 490 # Esta suele ser universal
+    "Tubo PVC 20mm (3m)": 2200,
+    "Tubo PVC 25mm (3m)": 2800,
+    "Tubo PVC 32mm (3m)": 3500,
+    "Tubo PVC 50mm (3m)": 5200,
+    "Tubo PVC 63mm (3m)": 7500,
+    "Válvula PVC 20mm (SO)": 1800,
+    "Válvula PVC 25mm (SO)": 2200,
+    "Válvula PVC 32mm (SO)": 2900,
+    "Válvula PVC 50mm (SO)": 4500,
+    "Válvula PVC 63mm (SO-HI)": 8900,
+    "Adhesivo PVC (Tarro 250cc)": 4500
 }
 
+# Crear columnas para organizar mejor el diseño
+col1, col2 = st.columns(2)
+
 totales_materiales = {}
-st.write("---")
-for material, precio in materiales.items():
-    cantidad = st.number_input(f"{material} ($ {precio} c/u)", min_value=0, step=1)
-    totales_materiales[material] = cantidad * precio
+
+# Mostrar materiales en dos columnas
+lista_items = list(materiales.items())
+for i in range(0, len(lista_items), 2):
+    c1, c2 = st.columns(2)
+    
+    # Columna izquierda
+    item1 = lista_items[i]
+    cant1 = c1.number_input(f"{item1[0]} (${item1[1]})", min_value=0, step=1, key=item1[0])
+    totales_materiales[item1[0]] = cant1 * item1[1]
+    
+    # Columna derecha (si existe)
+    if i + 1 < len(lista_items):
+        item2 = lista_items[i+1]
+        cant2 = c2.number_input(f"{item2[0]} (${item2[1]})", min_value=0, step=1, key=item2[0])
+        totales_materiales[item2[0]] = cant2 * item2[1]
 
 # --- CÁLCULO FINAL ---
 st.divider()
@@ -41,5 +60,5 @@ total_materiales = sum(totales_materiales.values())
 gran_total = total_servicios + total_materiales
 
 st.subheader(f"💰 Total Presupuesto: $ {gran_total:,.0f}")
-st.write(f"Total Servicios: $ {total_servicios:,.0f}")
-st.write(f"Total Materiales: $ {total_materiales:,.0f}")
+st.write(f"**Total Servicios:** $ {total_servicios:,.0f}")
+st.write(f"**Total Materiales:** $ {total_materiales:,.0f}")
