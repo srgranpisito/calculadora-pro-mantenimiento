@@ -1,7 +1,7 @@
 import streamlit as st
 
 # --- CONFIGURACIÓN Y VERSIÓN ---
-VERSION = "v6.1"
+VERSION = "v6.3"
 st.set_page_config(page_title="Calculadora Pro Mantenciones Beta", layout="centered")
 
 st.markdown(f"<p style='text-align: right; color: #888; font-size: 10px;'>Versión: {VERSION}</p>", unsafe_allow_html=True)
@@ -23,20 +23,21 @@ precio_tubo = metros * (diametro_tubo * 120)
 
 # --- SECCIÓN 3: CONEXIONES ---
 st.header("3. Conexiones y Accesorios")
-def selector_accesorio(nombre, precio_base):
-    c1, c2, c3 = st.columns([2, 1, 1])
+def selector_accesorio(nombre, precio_base, hilos=["SO", "HI", "SO-HI", "HE-HI"]):
+    c1, c2, c3, c4 = st.columns([2, 1, 1, 1])
     diam = c1.selectbox(f"Diámetro {nombre}:", [20, 25, 32, 50, 63, 75, 90, 110], key=f"d_{nombre}")
-    cant = c2.number_input(f"Cant:", min_value=0, key=f"c_{nombre}")
+    hilo = c2.selectbox(f"Conex:", hilos, key=f"h_{nombre}")
+    cant = c3.number_input(f"Cant:", min_value=0, key=f"c_{nombre}")
     return cant * (precio_base * (1 + (diam/100)))
 
-codo_90 = selector_accesorio("Codo 90°", 500)
-codo_45 = selector_accesorio("Codo 45°", 450)
-codo_doble = selector_accesorio("Codo Doble", 800)
-curva_conduit = selector_accesorio("Curva Conduit", 900)
-tee = selector_accesorio("Tee", 600)
-copla = selector_accesorio("Copla", 300)
-copla_conduit = selector_accesorio("Copla Conduit", 500)
-abrazadera = selector_accesorio("Abrazadera", 200)
+codo_90 = selector_accesorio("Codo 90°", 500, ["SO", "HI", "SO-HI"])
+codo_45 = selector_accesorio("Codo 45°", 450, ["SO", "SO-HI"])
+codo_doble = selector_accesorio("Codo Doble", 800, ["SO-HI"])
+curva_conduit = selector_accesorio("Curva Conduit", 900, ["HE-HI"])
+tee = selector_accesorio("Tee", 600, ["SO-HI"])
+copla = selector_accesorio("Copla", 300, ["SO-HI"])
+copla_conduit = selector_accesorio("Copla Conduit", 500, ["SO"])
+abrazadera = selector_accesorio("Abrazadera", 200, ["SO"])
 bajada = selector_accesorio("Bajada", 700)
 salida_caja_conduit = selector_accesorio("Salida Caja Conduit", 1000)
 terminal_tuerca = selector_accesorio("Terminal c/ Tuerca", 1200)
@@ -56,10 +57,11 @@ arandelas = selector_fijacion("Arandela", ["Plana", "Presión", "Goma"])
 
 # --- SECCIÓN 5: ADHESIVOS ---
 st.header("5. Adhesivos PVC")
-c1, c2 = st.columns(2)
-cant_tradicional = c1.number_input("Adhesivo Tradicional (tarros):", min_value=0)
-cant_humedad = c2.number_input("Adhesivo Alta Humedad (tarros):", min_value=0)
-total_adhesivos = (cant_tradicional * 4500) + (cant_humedad * 7500)
+c1, c2, c3 = st.columns(3)
+cant_trad = c1.number_input("Tradicional:", min_value=0)
+cant_hum = c2.number_input("Humedad:", min_value=0)
+cant_azul = c3.number_input("Riego (Azul):", min_value=0)
+total_adhesivos = (cant_trad * 4500) + (cant_hum * 7500) + (cant_azul * 5500)
 
 # --- CÁLCULO FINAL ---
 total_accesorios = codo_90 + codo_45 + codo_doble + curva_conduit + tee + copla + \
