@@ -1,7 +1,7 @@
 import streamlit as st
 
 # --- CONFIGURACIÓN Y VERSIÓN ---
-VERSION = "v6.3"
+VERSION = "v6.4"
 st.set_page_config(page_title="Calculadora Pro Mantenciones Beta", layout="centered")
 
 st.markdown(f"<p style='text-align: right; color: #888; font-size: 10px;'>Versión: {VERSION}</p>", unsafe_allow_html=True)
