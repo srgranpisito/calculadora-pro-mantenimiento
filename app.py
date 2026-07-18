@@ -1,10 +1,10 @@
 import streamlit as st
 
 # Configuración de página
-st.set_page_config(page_title="Calculadora Mantenciones Beta", layout="centered")
+st.set_page_config(page_title="Calculadora Pro Mantenciones Beta", layout="centered")
 
 # Diseño personalizado con HTML
-st.markdown("<h1 style='text-align: center; color: #2E86C1;'>🛠️ Mantenciones Beta</h1>", unsafe_allow_html=True)
+st.markdown("<h1 style='text-align: center; color: #2E86C1;'>🛠️ Calculadora Pro - Mantenciones Beta</h1>", unsafe_allow_html=True)
 st.write("---")
 
 # --- SECCIÓN 1: SERVICIOS ---
@@ -16,8 +16,7 @@ costo_hidro = st.number_input("Costo Hidrolavado ($)", min_value=0.0, step=1000.
 # --- SECCIÓN 2: MATERIALES ---
 st.header("2. Materiales de Ferretería")
 
-# Definición de materiales con sus características
-# Estructura: Nombre, Precio Base
+# Lista de materiales
 materiales = {
     "Tubo PVC 20mm (3m)": 2200,
     "Tubo PVC 25mm (3m)": 2800,
@@ -31,9 +30,6 @@ materiales = {
     "Válvula PVC 63mm (SO-HI)": 8900,
     "Adhesivo PVC (Tarro 250cc)": 4500
 }
-
-# Crear columnas para organizar mejor el diseño
-col1, col2 = st.columns(2)
 
 totales_materiales = {}
 
@@ -62,3 +58,13 @@ gran_total = total_servicios + total_materiales
 st.subheader(f"💰 Total Presupuesto: $ {gran_total:,.0f}")
 st.write(f"**Total Servicios:** $ {total_servicios:,.0f}")
 st.write(f"**Total Materiales:** $ {total_materiales:,.0f}")
+
+# --- AVISO LEGAL ---
+st.write("")
+st.markdown("""
+<div style='text-align: center; color: #888888; font-size: 12px;'>
+    <hr>
+    ⚠️ Nota: Todos los cálculos presentados en esta herramienta son estimados y están sujetos a variaciones según los precios de mercado actuales. 
+    Mantenciones Beta no se hace responsable por diferencias menores en precios de insumos.
+</div>
+""", unsafe_allow_html=True)
