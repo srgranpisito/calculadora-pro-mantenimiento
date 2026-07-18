@@ -1,7 +1,7 @@
 import streamlit as st
 
 # --- CONFIGURACIÓN ---
-VERSION = "v6.4"
+VERSION = "v6.5"
 st.set_page_config(page_title="Calculadora Pro Mantenciones", layout="centered")
 
 # Estilos CSS
@@ -67,7 +67,7 @@ pernos = selector_fijacion("Perno", ["Zincado", "Inoxidable", "Bronce"])
 tuercas = selector_fijacion("Tuerca", ["Hexagonal", "Ciega", "Autofrenante"])
 arandelas = selector_fijacion("Arandela", ["Plana", "Presión", "Goma"])
 
-# --- 5. ADHESIVOS ---
+# --- 5. ADHESIVOS (tarro)240cc ---
 st.header("5. Adhesivos PVC")
 c1, c2, c3 = st.columns(3)
 cant_trad = c1.number_input("Tradicional:", min_value=0)
