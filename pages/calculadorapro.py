@@ -1,8 +1,12 @@
 import streamlit as st
 
+# --- EL ESCUDO DE SEGURIDAD ---
+if 'logueado' not in st.session_state or not st.session_state.logueado:
+    st.switch_page("app.py")
+
 # --- CONFIGURACIÓN ---
 VERSION = "v6.5"
-st.set_page_config(page_title="Calculadora Pro Mantenciones", layout="centered")
+# st.set_page_config ya se llamó en app.py, no lo volvemos a llamar aquí.
 
 # Estilos CSS
 st.markdown("""
@@ -85,17 +89,14 @@ gran_total = costo_limpieza + costo_hipoclorito + costo_hidro + precio_tubo + \
 st.divider()
 st.subheader(f"💰 Total Presupuesto: $ {gran_total:,.0f}")
 
+# --- NOTA LEGAL ---
+st.divider()
+st.caption("""
+    **Aviso Legal:** Los cálculos presentados en esta herramienta son estimaciones aproximadas basadas en valores de mercado estándar dentro del territorio chileno. 
+    Los precios reales pueden variar según la ubicación geográfica, proveedor o ferretería local. 
+    Esta herramienta se proporciona únicamente con fines informativos; no asumimos responsabilidad alguna por discrepancias en los costos finales de adquisición.
+""")
+
 # --- EXPORTAR ---
-resumen = f"Presupuesto \nGRAN TOTAL: ${gran_total:,.0f}"
+resumen = f"Presupuesto - Calculadora Pro\nGRAN TOTAL: ${gran_total:,.0f}\n\nNota: Valores sujetos a cambios según mercado local (Chile)."
 st.download_button("📥 Descargar Presupuesto (.txt)", data=resumen, file_name="presupuesto.txt")
-import streamlit as st
-
-# --- EL ESCUDO ---
-# Si alguien intenta entrar sin loguearse, lo regresa al lobby
-if 'logueado' not in st.session_state or not st.session_state.logueado:
-    st.switch_page("app.py")
-
-# --- A PARTIR DE AQUÍ VA TU CÓDIGO INTACTO ---
-# (Pega aquí debajo todo tu código original de la calculadora)
-VERSION = "v6.5"
-# ... y todo lo demás que ya tenías ...
