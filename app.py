@@ -1,23 +1,36 @@
 import streamlit as st
+import json
+import os
 
+# --- GESTIÓN DE BASE DE DATOS (Archivo JSON) ---
+FILE_NAME = "usuarios.json"
+
+def cargar_usuarios():
+    if os.path.exists(FILE_NAME):
+        with open(FILE_NAME, "r") as f:
+            return json.load(f)
+    return {"admin": "1234"} # Usuario base si no existe el archivo
+
+def guardar_usuarios(usuarios):
+    with open(FILE_NAME, "w") as f:
+        json.dump(usuarios, f)
+
+# --- CONFIGURACIÓN ---
 st.set_page_config(page_title="Acceso - Calculadora Pro", layout="centered")
 
-# Inicializar sesión
+# --- LÓGICA DE LOGIN ---
 if 'logueado' not in st.session_state:
     st.session_state.logueado = False
-if 'usuarios' not in st.session_state:
-    st.session_state.usuarios = {"admin": "1234"}
 
 st.title("🔐 Acceso - Calculadora Pro")
-
-# Creamos las dos pestañas
 tab1, tab2 = st.tabs(["Ingresar", "Crear Cuenta"])
 
 with tab1:
     user_in = st.text_input("Usuario", key="u_in")
     pass_in = st.text_input("Contraseña", type="password", key="p_in")
     if st.button("Ingresar"):
-        if user_in in st.session_state.usuarios and st.session_state.usuarios[user_in] == pass_in:
+        usuarios = cargar_usuarios()
+        if user_in in usuarios and usuarios[user_in] == pass_in:
             st.session_state.logueado = True
             st.switch_page("pages/calculadorapro.py") 
         else:
@@ -27,10 +40,12 @@ with tab2:
     new_user = st.text_input("Nuevo Usuario", key="u_new")
     new_pass = st.text_input("Nueva Contraseña", type="password", key="p_new")
     if st.button("Registrar"):
-        if new_user in st.session_state.usuarios:
+        usuarios = cargar_usuarios()
+        if new_user in usuarios:
             st.warning("El usuario ya existe")
         elif not new_user or not new_pass:
-            st.error("Los campos no pueden estar vacíos")
+            st.error("Completa los campos")
         else:
-            st.session_state.usuarios[new_user] = new_pass
-            st.success("Cuenta creada con éxito. Ahora puedes ingresar.")
+            usuarios[new_user] = new_pass
+            guardar_usuarios(usuarios)
+            st.success("Cuenta creada. Ahora puedes ingresar.")
