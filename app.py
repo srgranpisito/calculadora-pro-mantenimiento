@@ -1,48 +1,123 @@
 import streamlit as st
 
-# Configuración inicial
-st.set_page_config(page_title="Calculadora Pro - beta", layout="centered")
-
-# --- CONTROL DE ESTADO ---
+# --- 1. LOBBY (EL ESCUDO) ---
 if 'logueado' not in st.session_state:
     st.session_state.logueado = False
 if 'usuarios' not in st.session_state:
     st.session_state.usuarios = {"admin": "1234"}
 
-# --- PANTALLA DE LOGIN ---
-def mostrar_login():
+if not st.session_state.logueado:
+    st.set_page_config(page_title="Acceso", layout="centered")
     st.title("🔐 Acceso - Calculadora Pro")
-    menu = st.radio("Acción:", ["Ingresar", "Crear cuenta"])
-    
-    user = st.text_input("Usuario")
-    pw = st.text_input("Contraseña", type="password")
-    
-    if st.button("Ejecutar"):
-        if menu == "Ingresar":
-            if user in st.session_state.usuarios and st.session_state.usuarios[user] == pw:
+    tab1, tab2 = st.tabs(["Ingresar", "Crear cuenta"])
+    with tab1:
+        u = st.text_input("Usuario", key="u1")
+        p = st.text_input("Contraseña", type="password", key="p1")
+        if st.button("Ingresar"):
+            if u in st.session_state.usuarios and st.session_state.usuarios[u] == p:
                 st.session_state.logueado = True
-                st.rerun() # Fuerza recarga inmediata
+                st.rerun()
             else:
                 st.error("Datos incorrectos")
-        else:
-            if user in st.session_state.usuarios:
-                st.warning("Usuario ya existe")
-            elif user and pw:
-                st.session_state.usuarios[user] = pw
+    with tab2:
+        nu = st.text_input("Nuevo usuario", key="u2")
+        np = st.text_input("Nueva contraseña", type="password", key="p2")
+        if st.button("Registrar"):
+            if nu in st.session_state.usuarios:
+                st.warning("El usuario ya existe")
+            elif nu and np:
+                st.session_state.usuarios[nu] = np
                 st.success("Cuenta creada, ahora ingresa")
             else:
                 st.error("Campos vacíos")
+    st.stop() 
 
-# --- PANTALLA PRINCIPAL ---
-def mostrar_calculadora():
-    st.sidebar.button("Cerrar Sesión", on_click=lambda: st.session_state.update({'logueado': False, 'rerun': st.rerun()}))
-    st.title("🛠️ Calculadora Pro - beta")
-    st.write("---")
-    # AQUÍ PEGARÁS TU CÓDIGO DE CÁLCULOS
-    st.success("Bienvenido a la calculadora")
+# --- 2. TU CÓDIGO ORIGINAL (INTACTO) ---
+# --- CONFIGURACIÓN ---
+VERSION = "v6.5"
+st.set_page_config(page_title="Calculadora Pro Mantenciones", layout="centered")
 
-# --- EJECUCIÓN ---
-if not st.session_state.logueado:
-    mostrar_login()
-else:
-    mostrar_calculadora()
+# Estilos CSS
+st.markdown("""
+    <style>
+    .main { background-color: #f8f9fa; }
+    h1 { color: #1f2937; }
+    .stButton>button { width: 100%; background-color: #2E86C1; color: white; }
+    </style>
+    """, unsafe_allow_html=True)
+
+st.markdown(f"<p style='text-align: right; color: #888; font-size: 10px;'>Versión: {VERSION}</p>", unsafe_allow_html=True)
+st.title("🛠️ Calculadora Pro - beta")
+st.markdown("---")
+
+# --- 1. SERVICIOS ---
+st.header("1. Servicios")
+col1, col2, col3 = st.columns(3)
+costo_limpieza = col1.number_input("Limpieza ($)", min_value=0.0, step=1000.0)
+costo_hipoclorito = col2.number_input("Insumos ($)", min_value=0.0, step=500.0)
+costo_hidro = col3.number_input("Hidro ($)", min_value=0.0, step=1000.0)
+
+# --- 2. TUBOS ---
+st.header("2. Tubos")
+col_a, col_b, col_c = st.columns(3)
+tipo_tubo = col_a.selectbox("Tipo:", ["PVC Agua", "PVC Alcantarillado", "PVC Sanitario", "Conduit"])
+diametro_tubo = col_b.selectbox("Diámetro (mm):", [20, 25, 32, 50, 63, 75, 90, 110])
+metros = col_c.number_input("Metros:", min_value=0, step=1)
+precio_tubo = metros * (diametro_tubo * 120)
+
+# --- 3. CONEXIONES (Todo incluido) ---
+st.header("3. Conexiones y Accesorios")
+def selector_accesorio(nombre, precio_base, hilos=["SO", "HI", "SO-HI", "HE-HI"]):
+    c1, c2, c3 = st.columns([2, 1, 1])
+    diam = c1.selectbox(f"{nombre} - Diámetro:", [20, 25, 32, 50, 63, 75, 90, 110], key=f"d_{nombre}")
+    hilo = c2.selectbox(f"Conex:", hilos, key=f"h_{nombre}")
+    cant = c3.number_input(f"Cant:", min_value=0, key=f"c_{nombre}")
+    return cant * (precio_base * (1 + (diam/100)))
+
+with st.expander("Gestionar Accesorios"):
+    codo_90 = selector_accesorio("Codo 90°", 500, ["SO", "HI", "SO-HI"])
+    codo_45 = selector_accesorio("Codo 45°", 450, ["SO", "SO-HI"])
+    codo_doble = selector_accesorio("Codo Doble", 800, ["SO-HI"])
+    curva_conduit = selector_accesorio("Curva Conduit", 900, ["HE-HI"])
+    tee = selector_accesorio("Tee", 600, ["SO-HI"])
+    copla = selector_accesorio("Copla", 300, ["SO-HI"])
+    copla_conduit = selector_accesorio("Copla Conduit", 500, ["SO"])
+    abrazadera = selector_accesorio("Abrazadera", 200, ["SO"])
+    bajada = selector_accesorio("Bajada", 700)
+    salida_caja_conduit = selector_accesorio("Salida Caja Conduit", 1000)
+    terminal_tuerca = selector_accesorio("Terminal c/ Tuerca", 1200)
+
+# --- 4. FIJACIONES ---
+st.header("4. Fijaciones")
+def selector_fijacion(nombre, opciones_tipo):
+    c1, c2, c3 = st.columns(3)
+    diam = c1.selectbox(f"Diám. {nombre}:", ["4mm", "6mm", "8mm", "10mm", "12mm"], key=f"d_{nombre}")
+    tipo = c2.selectbox(f"Tipo {nombre}:", opciones_tipo, key=f"t_{nombre}")
+    cant = c3.number_input(f"Cant {nombre}:", min_value=0, key=f"c_{nombre}")
+    return cant * 150
+
+pernos = selector_fijacion("Perno", ["Zincado", "Inoxidable", "Bronce"])
+tuercas = selector_fijacion("Tuerca", ["Hexagonal", "Ciega", "Autofrenante"])
+arandelas = selector_fijacion("Arandela", ["Plana", "Presión", "Goma"])
+
+# --- 5. ADHESIVOS (tarro)240cc ---
+st.header("5. Adhesivos PVC")
+c1, c2, c3 = st.columns(3)
+cant_trad = c1.number_input("Tradicional:", min_value=0)
+cant_hum = c2.number_input("Humedad:", min_value=0)
+cant_azul = c3.number_input("Riego (Azul):", min_value=0)
+total_adhesivos = (cant_trad * 4500) + (cant_hum * 7500) + (cant_azul * 5500)
+
+# --- CÁLCULO FINAL ---
+total_accesorios = codo_90 + codo_45 + codo_doble + curva_conduit + tee + copla + \
+                   copla_conduit + abrazadera + bajada + salida_caja_conduit + terminal_tuerca
+total_fijaciones = pernos + tuercas + arandelas
+gran_total = costo_limpieza + costo_hipoclorito + costo_hidro + precio_tubo + \
+             total_accesorios + total_fijaciones + total_adhesivos
+
+st.divider()
+st.subheader(f"💰 Total Presupuesto: $ {gran_total:,.0f}")
+
+# --- EXPORTAR ---
+resumen = f"Presupuesto Mantenciones C&R\nGRAN TOTAL: ${gran_total:,.0f}"
+st.download_button("📥 Descargar Presupuesto (.txt)", data=resumen, file_name="presupuesto.txt")
