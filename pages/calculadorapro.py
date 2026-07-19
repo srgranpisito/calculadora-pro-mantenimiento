@@ -86,5 +86,16 @@ st.divider()
 st.subheader(f"💰 Total Presupuesto: $ {gran_total:,.0f}")
 
 # --- EXPORTAR ---
-resumen = f"Presupuesto Mantenciones C&R\nGRAN TOTAL: ${gran_total:,.0f}"
+resumen = f"Presupuesto \nGRAN TOTAL: ${gran_total:,.0f}"
 st.download_button("📥 Descargar Presupuesto (.txt)", data=resumen, file_name="presupuesto.txt")
+import streamlit as st
+
+# --- EL ESCUDO ---
+# Si alguien intenta entrar sin loguearse, lo regresa al lobby
+if 'logueado' not in st.session_state or not st.session_state.logueado:
+    st.switch_page("app.py")
+
+# --- A PARTIR DE AQUÍ VA TU CÓDIGO INTACTO ---
+# (Pega aquí debajo todo tu código original de la calculadora)
+VERSION = "v6.5"
+# ... y todo lo demás que ya tenías ...
