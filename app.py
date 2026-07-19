@@ -4,50 +4,62 @@ import streamlit as st
 VERSION = "v6.5"
 st.set_page_config(page_title="Calculadora Pro - beta", layout="centered")
 
-# --- BASE DE DATOS TEMPORAL EN SESIÓN ---
+# --- GESTIÓN DE USUARIOS (EN MEMORIA) ---
 if 'usuarios' not in st.session_state:
-    st.session_state.usuarios = {"admin": "1234"} # Usuario por defecto
+    st.session_state.usuarios = {"admin": "1234"} # Usuario inicial
 
 if 'logueado' not in st.session_state:
     st.session_state.logueado = False
 
-# --- LOBBY (ACCESO / CREAR CUENTA) ---
+# --- LOBBY (LOGIN / REGISTRO) ---
 if not st.session_state.logueado:
-    st.title("🔐 Calculadora Pro - beta")
+    st.title("🛠️ Calculadora Pro - beta")
+    st.markdown("### Acceso al sistema")
     
-    tab1, tab2 = st.tabs(["Ingresar", "Crear Cuenta"])
+    tab1, tab2 = st.tabs(["Ingresar", "Crear cuenta"])
     
     with tab1:
-        user_login = st.text_input("Usuario", key="u_log")
-        pass_login = st.text_input("Contraseña", type="password", key="p_log")
+        user_in = st.text_input("Usuario", key="login_u")
+        pass_in = st.text_input("Contraseña", type="password", key="login_p")
         if st.button("Ingresar"):
-            if user_login in st.session_state.usuarios and st.session_state.usuarios[user_login] == pass_login:
+            if user_in in st.session_state.usuarios and st.session_state.usuarios[user_in] == pass_in:
                 st.session_state.logueado = True
                 st.rerun()
             else:
-                st.error("Usuario o contraseña incorrectos")
+                st.error("Credenciales incorrectas.")
                 
     with tab2:
-        new_user = st.text_input("Nuevo Usuario", key="u_new")
-        new_pass = st.text_input("Nueva Contraseña", type="password", key="p_new")
+        new_u = st.text_input("Nuevo usuario", key="new_u")
+        new_p = st.text_input("Nueva contraseña", type="password", key="new_p")
         if st.button("Registrar"):
-            if new_user in st.session_state.usuarios:
-                st.warning("El usuario ya existe")
-            elif new_user == "" or new_pass == "":
-                st.error("Los campos no pueden estar vacíos")
+            if new_u in st.session_state.usuarios:
+                st.warning("El usuario ya existe.")
+            elif not new_u or not new_p:
+                st.error("Completa todos los campos.")
             else:
-                st.session_state.usuarios[new_user] = new_pass
-                st.success("Cuenta creada con éxito. Ve a la pestaña 'Ingresar'")
+                st.session_state.usuarios[new_u] = new_p
+                st.success("Cuenta creada correctamente. Ve a 'Ingresar'.")
     st.stop()
 
-# --- APP PRINCIPAL (Solo visible si logueado) ---
-st.sidebar.write(f"Sesión activa")
-if st.sidebar.button("Cerrar Sesión"):
-    st.session_state.logueado = False
-    st.rerun()
+# --- APP PRINCIPAL (Solo si está logueado) ---
+# Estilos CSS
+st.markdown("""
+    <style>
+    .main { background-color: #f8f9fa; }
+    h1 { color: #1f2937; }
+    .stButton>button { width: 100%; background-color: #2E86C1; color: white; }
+    </style>
+    """, unsafe_allow_html=True)
 
+# Barra lateral para control
+with st.sidebar:
+    if st.button("Cerrar Sesión"):
+        st.session_state.logueado = False
+        st.rerun()
+
+# --- TU CÓDIGO ORIGINAL DESDE AQUÍ ---
 st.markdown(f"<p style='text-align: right; color: #888; font-size: 10px;'>Versión: {VERSION}</p>", unsafe_allow_html=True)
 st.title("🛠️ Calculadora Pro - beta")
 st.markdown("---")
 
-# ... (Aquí iría todo tu código original de servicios, tubos, etc.) ...
+# [Aquí pegas tu lógica de Servicios, Tubos, Conexiones, etc.]
