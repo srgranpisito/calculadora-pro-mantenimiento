@@ -4,18 +4,15 @@ import streamlit as st
 VERSION = "v6.5"
 st.set_page_config(page_title="Calculadora Pro - beta", layout="centered")
 
-# --- GESTIÓN DE USUARIOS (EN MEMORIA) ---
+# --- GESTIÓN DE ESTADO ---
 if 'usuarios' not in st.session_state:
-    st.session_state.usuarios = {"admin": "1234"} # Usuario inicial
-
+    st.session_state.usuarios = {"admin": "1234"}
 if 'logueado' not in st.session_state:
     st.session_state.logueado = False
 
-# --- LOBBY (LOGIN / REGISTRO) ---
+# --- LÓGICA DE ACCESO ---
 if not st.session_state.logueado:
     st.title("🛠️ Calculadora Pro - beta")
-    st.markdown("### Acceso al sistema")
-    
     tab1, tab2 = st.tabs(["Ingresar", "Crear cuenta"])
     
     with tab1:
@@ -24,7 +21,7 @@ if not st.session_state.logueado:
         if st.button("Ingresar"):
             if user_in in st.session_state.usuarios and st.session_state.usuarios[user_in] == pass_in:
                 st.session_state.logueado = True
-                st.rerun()
+                st.rerun()  # <--- Esto fuerza el salto a la calculadora
             else:
                 st.error("Credenciales incorrectas.")
                 
@@ -38,10 +35,13 @@ if not st.session_state.logueado:
                 st.error("Completa todos los campos.")
             else:
                 st.session_state.usuarios[new_u] = new_p
-                st.success("Cuenta creada correctamente. Ve a 'Ingresar'.")
-    st.stop()
+                st.success("Cuenta creada. Ahora inicia sesión.")
+                # No hacemos st.rerun() aquí para que el usuario lea el mensaje
+    
+    st.stop() # --- IMPORTANTE: Esto impide que la calculadora se cargue antes del login ---
 
-# --- APP PRINCIPAL (Solo si está logueado) ---
+# --- SI LLEGA AQUÍ, EL USUARIO ESTÁ LOGUEADO ---
+
 # Estilos CSS
 st.markdown("""
     <style>
@@ -51,15 +51,13 @@ st.markdown("""
     </style>
     """, unsafe_allow_html=True)
 
-# Barra lateral para control
 with st.sidebar:
     if st.button("Cerrar Sesión"):
         st.session_state.logueado = False
         st.rerun()
 
-# --- TU CÓDIGO ORIGINAL DESDE AQUÍ ---
 st.markdown(f"<p style='text-align: right; color: #888; font-size: 10px;'>Versión: {VERSION}</p>", unsafe_allow_html=True)
 st.title("🛠️ Calculadora Pro - beta")
 st.markdown("---")
 
-# [Aquí pegas tu lógica de Servicios, Tubos, Conexiones, etc.]
+# --- AQUÍ VA TODO TU CÓDIGO DE CÁLCULOS ORIGINAL ---
