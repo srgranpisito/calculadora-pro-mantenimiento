@@ -1,13 +1,15 @@
 import streamlit as st
 
-# --- 1. LOBBY (EL ESCUDO) ---
+# --- CONFIGURACIÓN GLOBAL (Solo una vez) ---
+st.set_page_config(page_title="Calculadora Pro - beta", layout="centered")
+
+# --- LÓGICA DE SESIÓN (EL LOBBY) ---
 if 'logueado' not in st.session_state:
     st.session_state.logueado = False
 if 'usuarios' not in st.session_state:
     st.session_state.usuarios = {"admin": "1234"}
 
 if not st.session_state.logueado:
-    st.set_page_config(page_title="Acceso", layout="centered")
     st.title("🔐 Acceso - Calculadora Pro")
     tab1, tab2 = st.tabs(["Ingresar", "Crear cuenta"])
     with tab1:
@@ -30,12 +32,11 @@ if not st.session_state.logueado:
                 st.success("Cuenta creada, ahora ingresa")
             else:
                 st.error("Campos vacíos")
-    st.stop() 
+    st.stop() # --- AQUÍ SE DETIENE SI NO ESTÁ LOGUEADO ---
 
-# --- 2. TU CÓDIGO ORIGINAL (INTACTO) ---
-# --- CONFIGURACIÓN ---
+# --- A PARTIR DE AQUÍ COMIENZA TU CÓDIGO INTACTO ---
+
 VERSION = "v6.5"
-st.set_page_config(page_title="Calculadora Pro Mantenciones", layout="centered")
 
 # Estilos CSS
 st.markdown("""
