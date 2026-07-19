@@ -1,43 +1,48 @@
 import streamlit as st
 
-# --- CONFIGURACIÓN DE SESIÓN ---
+# Configuración inicial
+st.set_page_config(page_title="Calculadora Pro - beta", layout="centered")
+
+# --- CONTROL DE ESTADO ---
 if 'logueado' not in st.session_state:
     st.session_state.logueado = False
 if 'usuarios' not in st.session_state:
     st.session_state.usuarios = {"admin": "1234"}
 
-# --- LÓGICA DE CONTROL (EL "FILTRO") ---
-if st.session_state.logueado == False:
-    # --- PANTALLA DE LOGIN ---
+# --- PANTALLA DE LOGIN ---
+def mostrar_login():
     st.title("🔐 Acceso - Calculadora Pro")
+    menu = st.radio("Acción:", ["Ingresar", "Crear cuenta"])
     
-    opcion = st.radio("¿Qué deseas hacer?", ["Ingresar", "Crear cuenta"])
+    user = st.text_input("Usuario")
+    pw = st.text_input("Contraseña", type="password")
     
-    usuario = st.text_input("Usuario")
-    password = st.text_input("Contraseña", type="password")
-    
-    if opcion == "Ingresar":
-        if st.button("Entrar"):
-            if usuario in st.session_state.usuarios and st.session_state.usuarios[usuario] == password:
+    if st.button("Ejecutar"):
+        if menu == "Ingresar":
+            if user in st.session_state.usuarios and st.session_state.usuarios[user] == pw:
                 st.session_state.logueado = True
-                st.rerun() # Fuerza la recarga inmediata
+                st.rerun() # Fuerza recarga inmediata
             else:
-                st.error("Credenciales incorrectas")
-    
-    elif opcion == "Crear cuenta":
-        if st.button("Registrar"):
-            if usuario in st.session_state.usuarios:
-                st.warning("El usuario ya existe")
+                st.error("Datos incorrectos")
+        else:
+            if user in st.session_state.usuarios:
+                st.warning("Usuario ya existe")
+            elif user and pw:
+                st.session_state.usuarios[user] = pw
+                st.success("Cuenta creada, ahora ingresa")
             else:
-                st.session_state.usuarios[usuario] = password
-                st.success("Cuenta creada, ahora selecciona 'Ingresar' para entrar")
-    
-    st.stop() # DETIENE TODO LO QUE SIGUE HACIA ABAJO
+                st.error("Campos vacíos")
 
-# --- SI LLEGA AQUÍ, EL USUARIO ESTÁ LOGUEADO ---
+# --- PANTALLA PRINCIPAL ---
+def mostrar_calculadora():
+    st.sidebar.button("Cerrar Sesión", on_click=lambda: st.session_state.update({'logueado': False, 'rerun': st.rerun()}))
+    st.title("🛠️ Calculadora Pro - beta")
+    st.write("---")
+    # AQUÍ PEGARÁS TU CÓDIGO DE CÁLCULOS
+    st.success("Bienvenido a la calculadora")
 
-st.sidebar.button("Cerrar Sesión", on_click=lambda: st.session_state.update({'logueado': False}))
-
-st.title("🛠️ Calculadora Pro - beta")
-st.write("Bienvenido a tu sistema de cálculos.")
-# AQUÍ PEGAS TODO TU CÓDIGO DE TUBOS, SERVICIOS, ETC.
+# --- EJECUCIÓN ---
+if not st.session_state.logueado:
+    mostrar_login()
+else:
+    mostrar_calculadora()
